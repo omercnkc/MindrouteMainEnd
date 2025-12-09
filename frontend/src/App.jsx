@@ -51,7 +51,7 @@ export default function App() {
     let reply = "";
 
     try {
-      const res = await fetch("/api/mood-chat", {
+      const res = await fetch("/api/mood-text", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +62,7 @@ export default function App() {
 
       if (res.ok) {
         const data = await res.json();
-        moodLabel = data.mood_label || "";
+        moodLabel = data.emotion || data.mood_label || "";
         reply =
           data.reply ||
           "Yazdıklarını okudum ve seni anlıyorum. Birlikte senin için uygun mekanları bulalım.";
