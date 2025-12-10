@@ -1,13 +1,17 @@
 import React, { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import solAltLeaf from "./assets/solalt.svg";
 import solUstLeaf from "./assets/solust.svg";
 import sagAltLeaf from "./assets/sagalt.svg";
 import sagUstLeaf from "./assets/sagust.svg";
 import ustOrtaLeaf from "./assets/ustorta.svg";
 import arkaPlan2 from "./assets/arkaplan2.png";
+import SuggestPlaces from "./pages/SuggestPlaces";
 import "./index.css";
+import "./App.css";
 
-export default function App() {
+function HomePage() {
+  const navigate = useNavigate();
   const [showVideoPage, setShowVideoPage] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [analyzedMood, setAnalyzedMood] = useState(null);
@@ -444,8 +448,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowPlaces(true);
-                    setShowAIChat(false);
+                    navigate("/suggest");
                   }}
                   style={{
                     padding: "12px 24px",
@@ -1119,5 +1122,14 @@ export default function App() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/suggest" element={<SuggestPlaces />} />
+    </Routes>
   );
 }
