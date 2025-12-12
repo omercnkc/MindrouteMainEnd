@@ -131,12 +131,14 @@ function HomePage() {
               setShowMoodConfirmation(false);
               setShowAIChat(false);
               setShowMoodInput(false);
+              setShowVideoPage(false);
               setAnalyzedMood(null);
               setUserMoodDescription("");
               setAiMoodLabel("");
               setAiReply("");
               setChatHistory([]);
               setChatInput("");
+              setSelectedFile(null);
             }}
             style={{
               position: "absolute",
@@ -262,6 +264,7 @@ function HomePage() {
             onClick={() => {
               setShowAIChat(false);
               setShowMoodInput(true);
+              setShowVideoPage(true);
             }}
             style={{
               position: "absolute",
@@ -448,7 +451,7 @@ function HomePage() {
                 <button
                   type="button"
                   onClick={() => {
-                    navigate("/suggest");
+                    navigate("/suggest", { state: { emotion: aiMoodLabel } });
                   }}
                   style={{
                     padding: "12px 24px",
@@ -820,7 +823,7 @@ function HomePage() {
           position: "relative",
         }}
       >
-        {/* Geri dön ok butonu */}
+        {/* Geri dön ok butonu - minimalist ikon */}
         <button
           onClick={() => {
             setShowVideoPage(false);
@@ -837,44 +840,40 @@ function HomePage() {
             setChatHistory([]);
             setChatInput("");
           }}
+          className="fixed top-6 left-6"
           style={{
-            position: "absolute",
-            top: "32px",
-            left: "32px",
-            width: "56px",
-            height: "56px",
-            borderRadius: "50%",
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            cursor: "pointer",
+            position: "fixed",
+            top: "24px",
+            left: "24px",
+            width: "44px",
+            height: "44px",
+            backgroundColor: "rgba(0,0,0,0.6)",
+            borderRadius: "9999px",
+            border: "1px solid rgba(255,255,255,0.4)",
+            padding: "10px",
+            color: "white",
+            zIndex: 9999,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            transition: "all 0.3s ease",
-            zIndex: 10,
+            backdropFilter: "blur(6px)",
+            boxShadow: "0 0 12px rgba(0,0,0,0.4)",
+            cursor: "pointer",
+            pointerEvents: "auto",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-            e.currentTarget.style.transform = "scale(1.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-            e.currentTarget.style.transform = "scale(1)";
-          }}
+          aria-label="Geri"
         >
           <svg
-            width="24"
-            height="24"
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="white"
-            strokeWidth="3"
+            stroke="currentColor"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="w-5 h-5"
           >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
+            <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
 

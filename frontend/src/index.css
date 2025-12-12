@@ -2,14 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  height: 100%;
+}
+
 html,
 body,
 #root {
-  height: 100%;
   width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+  background: none !important;
+}
+
+body {
+  min-height: 100vh;
+  height: 100%;
 }
 
 @keyframes breeze {
