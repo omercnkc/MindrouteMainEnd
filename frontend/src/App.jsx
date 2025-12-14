@@ -1058,7 +1058,7 @@ function HomePage() {
       <img src={solAltLeaf} alt="Sol alt yaprak" className="leaf" style={{ position: "absolute", bottom: "-80px", left: "-80px", width: "420px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
       <img src={solUstLeaf} alt="Sol üst yaprak" className="leaf" style={{ position: "absolute", top: "-140px", left: "-60px", width: "800px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
       <img src={sagAltLeaf} alt="Sağ alt yaprak" className="leaf" style={{ position: "absolute", bottom: "-35px", right: "-260px", width: "1250px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
-      <img src={sagUstLeaf} alt="Sağ üst yaprak" className="leaf" style={{ position: "absolute", top: "-180px", right: "-40px", width: "650px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
+      <img src={sagUstLeaf} alt="Sağ üst yaprak" className="leaf" style={{ position: "absolute", top: "-180px", right: "-40px", width: "650px", opacity: 0.95, pointerEvents: "none", zIndex: 3 }} />
       <img src={ustOrtaLeaf} alt="Üst orta yaprak" className="leaf-center" style={{ position: "absolute", top: "-40px", left: "42%", width: "1700px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
 
       {/* Alt ortadaki cam efektli kart + buton */}

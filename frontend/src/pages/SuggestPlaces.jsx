@@ -118,17 +118,25 @@ export default function SuggestPlaces() {
               <strong>Tür:</strong> {currentPlace.type || "Bilinmiyor"}
             </p>
 
-            <button
-              className="map-btn"
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${currentPlace.lat},${currentPlace.lon}`,
-                  "_blank"
-                )
-              }
-            >
-              Haritada Aç
-            </button>
+            <div className="place-buttons">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${currentPlace.lat},${currentPlace.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-google"
+              >
+                Google Maps'te Aç
+              </a>
+
+              <a
+                href={`https://www.openstreetmap.org/?mlat=${currentPlace.lat}&mlon=${currentPlace.lon}#map=18/${currentPlace.lat}/${currentPlace.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-osm"
+              >
+                OpenStreetMap'te Aç
+              </a>
+            </div>
 
             {places.length > 1 && (
               <button className="next-btn" onClick={nextPlace}>

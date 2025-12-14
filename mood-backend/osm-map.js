@@ -10,11 +10,29 @@ export const emotionCategoryMap = {
   ],
 
   sad: [
-    'node[leisure=park]',
-    'node[leisure=garden]',
+    'node[tourism=attraction]',
+    'way[tourism=attraction]',
+    'relation[tourism=attraction]',
+    'node[tourism=viewpoint]',
+    'way[tourism=viewpoint]',
+    'node[historic=castle]',
+    'way[historic=castle]',
+    'relation[historic=castle]',
+    'node[historic=fort]',
+    'way[historic=fort]',
+    'node[historic=ruins]',
+    'way[historic=ruins]',
+    'node[historic=yes]',
+    'way[historic=yes]',
     'node[natural=water]',
-    'node[leisure=nature_reserve]',
-    'node[amenity=library]'
+    'way[natural=water]',
+    'relation[natural=water]',
+    'node[natural=lake]',
+    'way[natural=lake]',
+    'relation[natural=lake]',
+    'node[natural=bay]',
+    'way[natural=bay]',
+    'node[natural=peak]'
   ],
 
   anxious: [

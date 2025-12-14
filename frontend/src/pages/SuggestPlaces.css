@@ -116,14 +116,15 @@
 
 /* Mekan kartı */
 .place-card {
-  background: rgba(255, 255, 255, 0.25);
-  padding: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 16px;
+  padding: 20px;
   margin-top: 24px;
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 16px;
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: left;
 }
 
@@ -144,26 +145,50 @@
   color: #e0ffea;
 }
 
-.map-btn {
-  width: 100%;
-  margin: 12px 0;
-  padding: 12px;
-  color: #e0ffea;
-  font-weight: bold;
-  font-size: 16px;
+.place-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn-google {
+  flex: 1;
+  background: #4285F4;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
   text-decoration: none;
-  background: rgba(34, 197, 94, 0.3);
-  border-radius: 10px;
-  border: 1px solid rgba(34, 197, 94, 0.5);
-  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-google:hover {
+  background: #357ae8;
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.map-btn:hover {
-  background: rgba(34, 197, 94, 0.5);
+.btn-osm {
+  flex: 1;
+  background: #2ecc71;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-osm:hover {
+  background: #27ae60;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .next-btn {
