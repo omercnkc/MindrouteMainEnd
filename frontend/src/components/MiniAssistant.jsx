@@ -7,8 +7,9 @@ export default function MiniAssistant() {
   const [chatHistory, setChatHistory] = useState([
     {
       role: "assistant",
-      content: "Merhaba, ruh hâlini anlatmak ister misin? Beraber nefes alalım.",
-      moodLabel: "başlangıç",
+      content:
+        "Merhaba, ben MindRoute'un mini asistanıyım. Nasıl yardımcı olabilirim? Ruh hâlini ya da yaşadığın sorunu yazabilirsin.",
+      moodLabel: "baslangic",
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -44,6 +45,7 @@ export default function MiniAssistant() {
             role,
             content,
           })),
+          source: "mini-assistant",
         }),
       });
 
@@ -159,7 +161,7 @@ export default function MiniAssistant() {
             maxHeight: "520px",
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "rgba(15, 23, 42, 0.9)",
+            background: "linear-gradient(155deg, rgba(15,23,42,0.35), rgba(15,23,42,0.16))",
             borderRadius: "24px",
             border: "1px solid rgba(255,255,255,0.1)",
             boxShadow: "0 30px 60px rgba(0,0,0,0.45)",
@@ -173,11 +175,12 @@ export default function MiniAssistant() {
           <div
             style={{
               padding: "18px 24px",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               color: "#fff",
+              backgroundColor: "rgba(15, 23, 42, 0.24)",
             }}
           >
             <div>
@@ -193,7 +196,7 @@ export default function MiniAssistant() {
                     fontWeight: 600,
                   }}
                 >
-                  Ruh hâlin: {latestMoodLabel}
+                  Ruh hâli: {latestMoodLabel}
                 </div>
               )}
             </div>
@@ -249,7 +252,7 @@ export default function MiniAssistant() {
               padding: "16px 18px",
               display: "flex",
               gap: "10px",
-              backgroundColor: "rgba(15, 23, 42, 0.85)",
+              backgroundColor: "rgba(15, 23, 42, 0.22)",
             }}
           >
             <input
@@ -260,14 +263,14 @@ export default function MiniAssistant() {
               style={{
                 flex: 1,
                 padding: "12px 14px",
-                borderRadius: "14px",
-                border: "1px solid rgba(255,255,255,0.15)",
-                backgroundColor: "rgba(15, 23, 42, 0.6)",
-                color: "#fff",
-                fontSize: "14px",
-                outline: "none",
-              }}
-            />
+              borderRadius: "14px",
+              border: "1px solid rgba(255,255,255,0.15)",
+              backgroundColor: "rgba(15, 23, 42, 0.18)",
+              color: "#fff",
+              fontSize: "14px",
+              outline: "none",
+            }}
+          />
             <button
               type="submit"
               disabled={isLoading || !currentMessage.trim()}
@@ -279,7 +282,9 @@ export default function MiniAssistant() {
                 color: "#fff",
                 fontWeight: 600,
                 cursor:
-                  isLoading || !currentMessage.trim() ? "not-allowed" : "pointer",
+                  isLoading || !currentMessage.trim()
+                    ? "not-allowed"
+                    : "pointer",
                 opacity: isLoading ? 0.6 : 1,
                 transition: "background-color 0.2s ease",
               }}
@@ -289,9 +294,6 @@ export default function MiniAssistant() {
           </form>
         </div>
       )}
-
     </>
   );
 }
-
-

@@ -336,14 +336,14 @@ function HomePage() {
                 Şu anda kendini şöyle hissettiğini anlıyorum:
               </h2>
               <p
-                style={{
-                  fontSize: "20px",
-                  fontWeight: 600,
-                  color: "#ffecb3",
-                  textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                }}
-              >
-                {aiMoodLabel}
+              style={{
+                fontSize: "20px",
+                fontWeight: 600,
+                color: "#ffecb3",
+                textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+              }}
+            >
+                {aiMoodLabel || "belirsiz"}
               </p>
             </div>
 
@@ -1037,86 +1037,20 @@ function HomePage() {
 
   // 🌿 1. Sayfa: Yapraklı giriş
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundImage: "url('/anasayfa1.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.10)", zIndex: 1 }}></div>
+    <div className="home-hero">
+      <div className="home-hero__overlay" />
 
       {/* Yapraklar */}
-      <img src={solAltLeaf} alt="Sol alt yaprak" className="leaf" style={{ position: "absolute", bottom: "-80px", left: "-80px", width: "420px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
-      <img src={solUstLeaf} alt="Sol üst yaprak" className="leaf" style={{ position: "absolute", top: "-140px", left: "-60px", width: "800px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
-      <img src={sagAltLeaf} alt="Sağ alt yaprak" className="leaf" style={{ position: "absolute", bottom: "-35px", right: "-260px", width: "1250px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
-      <img src={sagUstLeaf} alt="Sağ üst yaprak" className="leaf" style={{ position: "absolute", top: "-180px", right: "-40px", width: "650px", opacity: 0.95, pointerEvents: "none", zIndex: 3 }} />
-      <img src={ustOrtaLeaf} alt="Üst orta yaprak" className="leaf-center" style={{ position: "absolute", top: "-40px", left: "42%", width: "1700px", opacity: 0.95, pointerEvents: "none", zIndex: 2 }} />
+      <img src={solAltLeaf} alt="Sol alt yaprak" className="leaf home-leaf home-leaf--left-bottom" />
+      <img src={solUstLeaf} alt="Sol üst yaprak" className="leaf home-leaf home-leaf--left-top" />
+      <img src={sagAltLeaf} alt="Sağ alt yaprak" className="leaf home-leaf home-leaf--right-bottom" />
+      <img src={sagUstLeaf} alt="Sağ üst yaprak" className="leaf home-leaf home-leaf--right-top" />
+      <img src={ustOrtaLeaf} alt="Üst orta yaprak" className="leaf-center home-leaf home-leaf--center" />
 
       {/* Alt ortadaki cam efektli kart + buton */}
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          bottom: "6%",
-          transform: "translateX(-50%)",
-          padding: "18px 32px 24px",
-          borderRadius: "28px",
-          background: "rgba(0, 0, 0, 0.18)",
-          boxShadow: "0 18px 40px rgba(0, 0, 0, 0.45)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "12px",
-          zIndex: 10,
-        }}
-      >
-        <div
-          style={{
-            color: "#ffecb3",
-            fontSize: "20px",
-            fontWeight: 700,
-            textShadow: "0 3px 8px rgba(0,0,0,0.8)",
-          }}
-        >
-          Ruh hâline göre rotanı başlat
-        </div>
-        <button
-          onClick={() => setShowVideoPage(true)}
-          style={{
-            padding: "14px 48px",
-            borderRadius: "999px",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "20px",
-            fontWeight: 800,
-            letterSpacing: "0.03em",
-            color: "#fff7e6",
-            backgroundImage: "linear-gradient(135deg, #ffb347, #ff5f6d)",
-            boxShadow: "0 10px 0 #b23c00, 0 18px 40px rgba(0,0,0,0.8)",
-            textTransform: "uppercase",
-            transition: "transform 0.15s ease-out, box-shadow 0.15s ease-out",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(2px)";
-            e.currentTarget.style.boxShadow = "0 6px 0 #b23c00, 0 12px 30px rgba(0,0,0,0.8)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 10px 0 #b23c00, 0 18px 40px rgba(0,0,0,0.8)";
-          }}
-        >
+      <div className="home-cta-card">
+        <div className="home-cta-card__title">Ruh hâline göre rotanı başlat</div>
+        <button className="home-cta-card__button" onClick={() => setShowVideoPage(true)}>
           Başla
         </button>
       </div>

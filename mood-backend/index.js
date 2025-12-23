@@ -4,7 +4,7 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import fetch from "node-fetch";
-import { detectEmotion } from "./mood-engine.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { emotionCategoryMap } from "./osm-map.js";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -13,6 +13,20 @@ app.use(cors());
 app.use(express.json());
 
 const prisma = new PrismaClient();
+
+const geminiApiKey = process.env.GEMINI_API_KEY;
+const geminiClient = geminiApiKey ? new GoogleGenerativeAI(geminiApiKey) : null;
+const geminiModel = geminiClient
+  ? geminiClient.getGenerativeModel({
+      model: "gemini-2.5-flash-lite",
+      systemInstruction:
+        "You are a short, empathetic Turkish mood assistant. Answer in Turkish in 2-3 sentences, be supportive, and avoid medical claims.",
+    })
+  : null;
+
+if (!geminiModel) {
+  console.warn("Gemini API key not provided; /api/mood-text will use rule-based replies.");
+}
 
 console.log("HF Mood backend çalışıyor:", `http://localhost:${process.env.PORT}`);
 
@@ -279,34 +293,223 @@ const cityCoords = {
   elazig: { lat: 38.6747, lon: 39.2228 },
 };
 
+const personaPrompts = {
+  "mini-assistant":
+    "Sen MindRoute web sitesinin mini destek asistanisin. Turkce yanit ver, en fazla 2-4 cumlede net, sicak ve empatik ol. Kullanici bir sorun ya da istek yazdiginda once kisa ozetle, gerekirse 1-3 adimlik yonlendirme sun, ihtiyac varsa hangi bilgileri vermesi gerektigini sor. Tibbi veya hukuki iddialar kullanma. Gereksiz konulara girme, yanitlari kisik tut.",
+  default:
+    "Sen MindRoute icin Turkce destek asistanisin. Sorunlari hizli ozetle, cozum adimlarini net ve kisa anlat, gerektiginde ek bilgi iste. Tibbi veya hukuki iddialar kullanma.",
+};
+
+async function generateGeminiReply(history, latestUserText, source = "default") {
+  if (!geminiModel) return null;
+
+  const safeHistory = Array.isArray(history) ? history : [];
+  const personaPrefix = personaPrompts[source] || personaPrompts.default;
+
+  const contents = [];
+
+  if (personaPrefix) {
+    contents.push({
+      role: "user",
+      parts: [{ text: personaPrefix }],
+    });
+  }
+
+  contents.push(
+    ...safeHistory
+      .filter((item) => item && typeof item === "object" && item.content)
+      .map((item) => ({
+        role: item.role === "assistant" ? "model" : "user",
+        parts: [{ text: String(item.content) }],
+      }))
+  );
+
+  const lastRole = safeHistory[safeHistory.length - 1]?.role;
+  if (latestUserText && lastRole !== "user") {
+    contents.push({
+      role: "user",
+      parts: [{ text: String(latestUserText) }],
+    });
+  }
+
+  if (!contents.length) {
+    return null;
+  }
+
+  const result = await geminiModel.generateContent({
+    contents,
+    generationConfig: {
+      maxOutputTokens: 256,
+      temperature: 0.7,
+    },
+  });
+
+  const text = result?.response?.text?.();
+  return text ? text.trim() : null;
+}
+
+async function generateGeminiMood(history, latestUserText) {
+  if (!geminiModel) return null;
+
+  const safeHistory = Array.isArray(history) ? history : [];
+  const contents = [];
+
+  contents.push(
+    ...safeHistory
+      .filter((item) => item && typeof item === "object" && item.content)
+      .map((item) => ({
+        role: item.role === "assistant" ? "model" : "user",
+        parts: [{ text: String(item.content) }],
+      }))
+  );
+
+  if (latestUserText) {
+    contents.push({
+      role: "user",
+      parts: [{ text: String(latestUserText) }],
+    });
+  }
+
+  contents.push({
+    role: "user",
+    parts: [
+      {
+        text:
+          "Sohbete gore kullanicinin baskin duygusunu tek kelimeyle yaz. Sadece su listeden birini sec ve baska bir sey yazma: mutlu, uzgun, kaygili, ofkeli, yorgun, heyecanli, notr.",
+      },
+    ],
+  });
+
+  const result = await geminiModel.generateContent({
+    contents,
+    generationConfig: {
+      maxOutputTokens: 8,
+      temperature: 0,
+      topP: 0.9,
+    },
+  });
+
+  const moodText = result?.response?.text?.() || "";
+  const rawFirst = moodText.trim().split(/\s+/)[0] || "";
+  const firstToken = normalizeToken(rawFirst);
+
+  if (ALLOWED_MOODS.includes(firstToken)) return firstToken;
+  if (MOOD_SYNONYMS[firstToken]) return MOOD_SYNONYMS[firstToken];
+  return null;
+}
+
+const ALLOWED_MOODS = ["mutlu", "uzgun", "kaygili", "ofkeli", "yorgun", "heyecanli", "notr"];
+
+const MOOD_SYNONYMS = {
+  sad: "uzgun",
+  unhappy: "uzgun",
+  depressed: "uzgun",
+  blues: "uzgun",
+  angry: "ofkeli",
+  mad: "ofkeli",
+  furious: "ofkeli",
+  anxious: "kaygili",
+  worry: "kaygili",
+  worried: "kaygili",
+  nervous: "kaygili",
+  tired: "yorgun",
+  exhausted: "yorgun",
+  sleepy: "yorgun",
+  excited: "heyecanli",
+  thrilled: "heyecanli",
+  happy: "mutlu",
+  joy: "mutlu",
+  joyful: "mutlu",
+  cheerful: "mutlu",
+  neutral: "notr",
+  calm: "notr",
+};
+
+function normalizeToken(token) {
+  return (token || '')
+    .toLowerCase()
+    .replace(/\u00e7/g, 'c')
+    .replace(/\u011f/g, 'g')
+    .replace(/\u0131/g, 'i')
+    .replace(/\u00f6/g, 'o')
+    .replace(/\u015f/g, 's')
+    .replace(/\u00fc/g, 'u');
+}
+
+
+// ===================================
+function fallbackMoodFromText(text) {
+  const norm = normalizeToken(text || '');
+  const patterns = [
+    { key: 'mutlu', terms: ['mutlu', 'sevindim', 'cok sevindim', 'harika', 'iyi hissediyorum'] },
+    { key: 'uzgun', terms: ['uzgun', 'uzuldum', 'kederli', 'moralsiz', 'yikildim'] },
+    { key: 'kaygili', terms: ['kaygili', 'endise', 'korku', 'gergin', 'telas'] },
+    { key: 'ofkeli', terms: ['ofkeli', 'sinirli', 'kizgin', 'cok sinirliyim'] },
+    { key: 'yorgun', terms: ['yorgun', 'bitkin', 'uykusuz', 'halsiz'] },
+    { key: 'heyecanli', terms: ['heyecanli', 'sabirsiz', 'merakli'] },
+  ];
+  for (const { key, terms } of patterns) {
+    if (terms.some((t) => norm.includes(t))) return key;
+  }
+  return null;
+}
+
 // ===================================
 //  TEXT TABANLI DUYGU ANALİZİ ENDPOINTİ
 // ===================================
 app.post("/api/mood-text", async (req, res) => {
   try {
     const userText = req.body.message || "";
+    const history = Array.isArray(req.body.history) ? req.body.history : [];
+    const source = req.body.source || "default";
 
     if (!userText.trim()) {
       return res.status(400).json({
-        error: "Mesaj boş olamaz",
+        error: "Mesaj bos olamaz",
       });
     }
 
-    // Manuel duygu tespit motoru
-    const { emotion, reply } = detectEmotion(userText);
-    const mood = emotion || "belirsiz";
+    if (!geminiModel) {
+      return res.status(503).json({
+        error: "Gemini API key not provided",
+        reply: "Su anda yanit veremiyorum ama yanindayim. Lutfen birazdan tekrar dene.",
+        mood_label: "belirsiz",
+      });
+    }
+
+    const mood = "belirsiz";
 
     console.log("Text input:", userText);
     console.log("Detected mood:", mood);
 
+    let geminiReply = null;
+    let geminiMood = null;
+    try {
+      geminiReply = await generateGeminiReply(history, userText, source);
+      geminiMood = await generateGeminiMood(history, userText);
+    } catch (geminiErr) {
+      console.error("Gemini chat error:", geminiErr);
+    }
+
+    const moodLabel =
+      (geminiMood && geminiMood.trim()) ||
+      fallbackMoodFromText(userText) ||
+      mood ||
+      "belirsiz";
+
+    const finalReply =
+      (geminiReply && geminiReply.trim()) ||
+      "Su anda yanit olusturamadim ama seni dinliyorum. Birazdan tekrar dener misin?";
+
     return res.json({
-      mood_label: mood,
-      reply,
+      mood_label: moodLabel,
+      emotion: moodLabel,
+      reply: finalReply,
     });
   } catch (err) {
     console.error("TEXT endpoint error:", err);
     return res.status(500).json({
-      error: "Sunucu hatası",
+      error: "Sunucu hatasi",
     });
   }
 });
